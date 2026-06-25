@@ -1,4 +1,4 @@
-# Week 3 Open-Meteo API 项目
+# Open-Meteo API 项目
 
 这个项目练习：
 
