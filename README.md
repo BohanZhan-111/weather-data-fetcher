@@ -1,139 +1,133 @@
 # Weather Data Fetcher
 
-A Python project that fetches 7-day weather forecast data from the Open-Meteo API, stores the result as a CSV file, generates a temperature trend chart, and supports scheduled data collection.
+A Python weather data pipeline that retrieves a 7-day weather forecast from the Open-Meteo API, saves the data as a CSV file, and generates a temperature trend chart.
 
-This project was built as a Week 3 API practice project covering:
+## Features
 
-- `requests` for API calls
-- JSON parsing
-- `pandas` DataFrame transformation
-- `.env` configuration with `python-dotenv`
-- scheduled jobs with `schedule`
-- logging
-- chart generation with `matplotlib`
-- Git and GitHub workflow
+- Convert a city name into latitude and longitude using the Open-Meteo Geocoding API
+- Retrieve a 7-day weather forecast from the Open-Meteo Forecast API
+- Save weather data as a CSV file
+- Generate a temperature forecast chart with Matplotlib
+- Log the execution process
+- Read configuration from `.env`
+- Handle API failures with fallback sample data
 
 ## Project Structure
 
 ```text
 weather-data-fetcher/
-├── main.py              # Command-line entry point
-├── config.py            # Environment variables and project paths
-├── geocoding.py         # City name to latitude/longitude
-├── weather.py           # Open-Meteo forecast request and DataFrame creation
-├── visualize.py         # Temperature chart generation
-├── requirements.txt     # Python dependencies
-├── .env.example         # Example environment configuration
-├── .gitignore           # Files that should not be committed
-├── data/                # Generated CSV output
-├── charts/              # Generated chart output
-└── logs/                # Runtime logs
+├── main.py
+├── config.py
+├── geocoding.py
+├── weather.py
+├── visualize.py
+├── requirements.txt
+├── README.md
+├── .env.example
+├── data/
+│   └── weather.csv
+└── charts/
+    └── weather_forecast.png
 ```
 
-## API Used
+## Technologies
 
-| API | Purpose | API Key Required |
-| --- | --- | --- |
-| Open-Meteo Geocoding API | Convert a city name into latitude and longitude | No |
-| Open-Meteo Forecast API | Fetch 7-day weather forecast data | No |
+- Python 3
+- Requests
+- Pandas
+- Matplotlib
+- python-dotenv
+- Logging
+- Open-Meteo API
 
-Open-Meteo does not require an API key, so this project uses `.env` for default project settings instead of secrets.
+## Installation
 
-## Setup
-
-### 1. Create and activate a virtual environment
-
-Windows PowerShell:
-
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
+```bash
+git clone https://github.com/BohanZhan-111/weather-data-fetcher.git
+cd weather-data-fetcher
+python -m venv .venv
 ```
 
-If script execution is blocked, run:
+Windows:
 
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```bash
+.venv\Scripts\activate
 ```
 
-Then activate the virtual environment again.
+Install dependencies:
 
-### 2. Install dependencies
-
-```powershell
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
 ```
 
-### 3. Create a local `.env` file
+## Configuration
 
-```powershell
-copy .env.example .env
-```
+Create a `.env` file:
 
-You can edit `.env` to change the default city or schedule time:
-
-```env
-DEFAULT_CITY=Boston
-SCHEDULE_TIME=09:00
+```text
+CITY=Boston
 ```
 
 ## Usage
 
-Run once with the default city from `.env`:
-
-```powershell
+```bash
 python main.py
 ```
 
-Run once with a specific city:
+or
 
-```powershell
-python main.py --city Boston
+```bash
+python main.py --city "New York"
 ```
-
-Run the daily scheduler:
-
-```powershell
-python main.py --schedule
-```
-
-Run the test scheduler every 10 seconds:
-
-```powershell
-python main.py --test-schedule
-```
-
-Stop the scheduler with `Ctrl + C`.
 
 ## Output
 
-After a successful run, the project creates:
+- `data/weather.csv`
+- `charts/weather_forecast.png`
+
+## Example Output
+
+![Weather Forecast](charts/weather_forecast.png)
+
+## Workflow
 
 ```text
-data/weather.csv
-charts/weather_forecast.png
-logs/app.log
+User Input
+     │
+     ▼
+Geocoding API
+     │
+     ▼
+Forecast API
+     │
+     ▼
+Pandas DataFrame
+     │
+     ├── CSV Export
+     └── Visualization
 ```
 
-The CSV contains:
+## Sample Console Output
 
-- city
-- country
-- date
-- maximum temperature in Celsius
-- minimum temperature in Celsius
-- maximum precipitation probability
-
-## Example Workflow
-
-```powershell
-python main.py --city Boston
-git add .
-git commit -m "Upgrade weather data pipeline"
-git push
+```text
+INFO | Starting weather pipeline
+INFO | Selected city: Boston
+INFO | Resolved location: Boston, United States
+INFO | Saved CSV file
+INFO | Saved chart file
+INFO | Pipeline finished successfully
 ```
 
-## Notes
+## Future Improvements
 
-The `.env` file, virtual environment, logs, charts, and generated CSV files should not be committed to GitHub. The `.gitignore` file is configured to exclude them.
+- Scheduled weather collection
+- SQLite database support
+- FastAPI REST API
+- GitHub Actions
+- Docker
+
+## Author
+
+**Bohan Zhan**
+
+GitHub: https://github.com/BohanZhan-111
