@@ -1,7 +1,4 @@
-"""
-城市名 -> 经纬度
-使用 Open-Meteo Geocoding API。
-"""
+"""Geocoding helpers for converting a city name into latitude and longitude."""
 
 from typing import Optional
 
@@ -11,7 +8,7 @@ from config import GEOCODING_URL
 
 
 def get_city_location(city: str) -> Optional[dict]:
-    """用城市名查询经纬度、国家、时区。"""
+    """Return location metadata for a city using the Open-Meteo Geocoding API."""
     params = {
         "name": city,
         "count": 1,
@@ -19,27 +16,18 @@ def get_city_location(city: str) -> Optional[dict]:
         "format": "json",
     }
 
-    try:
-        response = requests.get(GEOCODING_URL, params=params, timeout=10)
-        response.raise_for_status()
-        data = response.json()
+    response = requests.get(GEOCODING_URL, params=params, timeout=10)
+    response.raise_for_status()
+    data = response.json()
 
-        if not data.get("results"):
-            print(f"找不到城市：{city}")
-            return None
-
-        result = data["results"][0]
-        return {
-            "city": result["name"],
-            "country": result.get("country", ""),
-            "latitude": result["latitude"],
-            "longitude": result["longitude"],
-            "timezone": result.get("timezone", "auto"),
-        }
-
-    except requests.exceptions.Timeout:
-        print("Geocoding request timed out")
+    if not data.get("results"):
         return None
-    except requests.exceptions.RequestException as e:
-        print(f"Geocoding request failed: {e}")
-        return None
+
+    result = data["results"][0]
+    return {
+        "city": result["name"],
+        "country": result.get("country", ""),
+        "latitude": result["latitude"],
+        "longitude": result["longitude"],
+        "timezone": result.get("timezone", "auto"),
+    }

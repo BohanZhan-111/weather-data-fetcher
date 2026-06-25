@@ -1,90 +1,139 @@
-# Open-Meteo API 项目
+# Weather Data Fetcher
 
-这个项目练习：
+A Python project that fetches 7-day weather forecast data from the Open-Meteo API, stores the result as a CSV file, generates a temperature trend chart, and supports scheduled data collection.
 
-- `requests` 调用 API
-- 解析 JSON
-- 保存为 pandas DataFrame
-- 使用 `.env` 管理配置
-- 使用 `schedule` 做定时任务
+This project was built as a Week 3 API practice project covering:
 
-## 项目结构
+- `requests` for API calls
+- JSON parsing
+- `pandas` DataFrame transformation
+- `.env` configuration with `python-dotenv`
+- scheduled jobs with `schedule`
+- logging
+- chart generation with `matplotlib`
+- Git and GitHub workflow
+
+## Project Structure
 
 ```text
-week3_open_meteo_clean/
-├── main.py             # 程序入口：运行抓取 / 定时任务
-├── config.py           # 读取 .env 配置
-├── geocoding.py        # 城市名 -> 经纬度
-├── weather.py          # 经纬度 -> 天气 DataFrame
-├── requirements.txt    # 依赖包
-├── .env.example        # .env 模板
-├── .gitignore          # 防止 .env / data CSV 被上传
-├── data/               # 自动保存 weather.csv
-└── README.md
+weather-data-fetcher/
+├── main.py              # Command-line entry point
+├── config.py            # Environment variables and project paths
+├── geocoding.py         # City name to latitude/longitude
+├── weather.py           # Open-Meteo forecast request and DataFrame creation
+├── visualize.py         # Temperature chart generation
+├── requirements.txt     # Python dependencies
+├── .env.example         # Example environment configuration
+├── .gitignore           # Files that should not be committed
+├── data/                # Generated CSV output
+├── charts/              # Generated chart output
+└── logs/                # Runtime logs
 ```
 
-## 1. 安装依赖
+## API Used
 
-```bash
-pip install -r requirements.txt
+| API | Purpose | API Key Required |
+| --- | --- | --- |
+| Open-Meteo Geocoding API | Convert a city name into latitude and longitude | No |
+| Open-Meteo Forecast API | Fetch 7-day weather forecast data | No |
+
+Open-Meteo does not require an API key, so this project uses `.env` for default project settings instead of secrets.
+
+## Setup
+
+### 1. Create and activate a virtual environment
+
+Windows PowerShell:
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-## 2. 配置 .env
+If script execution is blocked, run:
 
-Open-Meteo 不需要 API Key，所以 `.env` 主要用来练习保存默认城市和定时时间。
-
-```bash
-cp .env.example .env
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-`.env` 示例：
+Then activate the virtual environment again.
+
+### 2. Install dependencies
+
+```powershell
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+### 3. Create a local `.env` file
+
+```powershell
+copy .env.example .env
+```
+
+You can edit `.env` to change the default city or schedule time:
 
 ```env
 DEFAULT_CITY=Boston
 SCHEDULE_TIME=09:00
-DATA_DIR=data
-WEATHER_CSV_NAME=weather.csv
 ```
 
-## 3. 立即运行一次
+## Usage
 
-使用 `.env` 里的默认城市：
+Run once with the default city from `.env`:
 
-```bash
+```powershell
 python main.py
 ```
 
-指定城市：
+Run once with a specific city:
 
-```bash
-python main.py --city "New York"
+```powershell
+python main.py --city Boston
 ```
 
-## 4. 启动定时任务
+Run the daily scheduler:
 
-```bash
+```powershell
 python main.py --schedule
 ```
 
-程序会先抓取一次，然后每天按 `.env` 里的 `SCHEDULE_TIME` 自动抓取。
+Run the test scheduler every 10 seconds:
 
-## 5. 输出结果
+```powershell
+python main.py --test-schedule
+```
 
-运行后会生成：
+Stop the scheduler with `Ctrl + C`.
+
+## Output
+
+After a successful run, the project creates:
 
 ```text
 data/weather.csv
+charts/weather_forecast.png
+logs/app.log
 ```
 
-里面包含：
+The CSV contains:
 
 - city
 - country
 - date
-- temperature_max_c
-- temperature_min_c
-- precipitation_probability_max_percent
+- maximum temperature in Celsius
+- minimum temperature in Celsius
+- maximum precipitation probability
 
-## 说明
+## Example Workflow
 
-这个版本只保留 Open-Meteo 部分，更符合你现在的 task。JSONPlaceholder 和 RestCountries 已经移除。
+```powershell
+python main.py --city Boston
+git add .
+git commit -m "Upgrade weather data pipeline"
+git push
+```
+
+## Notes
+
+The `.env` file, virtual environment, logs, charts, and generated CSV files should not be committed to GitHub. The `.gitignore` file is configured to exclude them.
